@@ -9,7 +9,7 @@
 	{"project":"tower", "start":1,"end":2,"resources":"sa,vn,jl"},
 	{"project":"boat", "start":1,"end":4,"resources":"sj,md,me,ps,as,cl"},
 	{"project":"paddle","start":3,"end":6, "resources":"bk,rl,ll"},
-	{"project":"pet","start":1,"end":7, "resources":"dn,em"},
+	{"project":"station","start":1,"end":7, "resources":"dn,em"},
 	{"project":"castle","start":3,"end":3, "resources":"nm,ch,cb"},
 	{"project":"kennel", "start":15,"end":22,"resources":"as"},
 	{"project":"buttress", "start":1,"end":6,"resources":"sj,bk,bl,sa,jy"},
