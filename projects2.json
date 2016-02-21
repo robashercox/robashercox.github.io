@@ -12,9 +12,9 @@
 	{"project":"pet","start":1,"end":7, "resources":"dn,em"},
 	{"project":"castle","start":3,"end":3, "resources":"nm,ch,cb"},
 	{"project":"kennel", "start":15,"end":22,"resources":"as"},
-	{"project":"rat", "start":1,"end":6,"resources":"sj,bk,bl,sa,jy"},
-	{"project":"bat","start":12,"end":13, "resources":"cz,lw,df,bk,rl,ll"},
-	{"project":"moat","start":6,"end":15, "resources":"dn,em"},
-	{"project":"stoat","start":3,"end":14, "resources":"ch,cb"},
+	{"project":"buttress", "start":1,"end":6,"resources":"sj,bk,bl,sa,jy"},
+	{"project":"bridge","start":12,"end":13, "resources":"cz,lw,df,bk,rl,ll"},
+	{"project":"fort","start":6,"end":15, "resources":"dn,em"},
+	{"project":"yacht","start":3,"end":14, "resources":"ch,cb"},
 	{"project":"canoe", "start":6,"end":14,"resources":"as,ps"}
 ]}
