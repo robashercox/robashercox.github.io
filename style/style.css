@@ -12,7 +12,7 @@ html,body,.App{
 	height: 70%;
 }
 #plot{
-	width: 80%;
+	width: 100%;
 	height: 30%;
 }
 #controls{
@@ -24,6 +24,8 @@ html,body,.App{
 }
 .ab{
 	width: 100%;
+	height:12.5%;
 	display: block;
-	text-align: center;
+/*	text-align: center;*/
+	vertical-align: center;
 }
