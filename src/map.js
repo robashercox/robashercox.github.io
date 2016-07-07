@@ -17,7 +17,7 @@
 //for every property add a button with the properties name
 properties = R.keys(sydneySa1.features[0].properties)
 
-colors = chroma.scale(['red', 'deepskyblue']).mode('hsl').colors(properties.length);
+colors = chroma.scale('Set1').mode('lab').colors(properties.length);
 
 colorDict = R.zipObj(properties,colors)
 
@@ -100,7 +100,8 @@ function filterOutliers(someArray) {
 //function that adds a button to el with ID elID, and calls that button text
 function dataPropertyButton(elID, text){
 	el = $('#'+elID)
-	el.append($('<div>%s</div>'.replace('%s', text)).toggleClass('pure_button block ab'));
+	el.append($('<div>%s</div>'.replace('%s', text)).toggleClass('pure_button block ab').css("background-color",colorDict[text]));
+	
 	// change background colour and set opacity = 0.2
 }
 
@@ -115,6 +116,7 @@ R.map(addCtrlButtons, properties)
 function containerListener(elID){
 	el = $('#'+elID);
 	el.click(function(event){
+		console.log(event.target.textContent);
 		dataPropertyColor(event.target.textContent);
 		createPlot(event.target.textContent);
 		}) 
@@ -126,12 +128,13 @@ containerListener("controls",dataPropertyColor)
 function dataPropertyColor(text){
 	props = R.map(R.path(['properties',text],R.__),sydneySa1.features)
 	props = R.filter(function(x){return !(x==0);},props);
+	// console.log(props);
 	max = R.reduce(R.max,-Infinity,filterOutliers(props));
-	min = R.reduce(R.min,+Infinity,props);
+	min = R.reduce(R.min,+Infinity,props)||0;
 	console.log(colorDict[text]);
 	colors5 = chroma.scale(['lightyellow',colorDict[text]]).mode('lch').colors(3);
 	divs = [min,(min+max)/2,max];
-	
+	// console.log(R.zip(divs,colors5));
 	newStyle = {
 			property: text,
 			stops: R.zip(divs,colors5)
@@ -151,12 +154,21 @@ function createPlot(text){
 	}
 	data = [plot]
 	layout = {title: text + " vs distance to nearest train station",
-	 titlefont: {
+	titlefont: {
 	      family: 'Courier New, monospace',
 	      size: 18,
 	      color: '#7f7f7f'
 	    },
-    hovermode:'closest'}
+    hovermode:'closest',
+    margin: {
+		    l: 50,
+		    r: 50,
+		    b: 30,
+		    t: 30,
+		    pad: 4
+  		}
+
+		}
 	plot = document.getElementById('plot');
 	Plotly.newPlot(plot, data, layout)
 	plot.on('plotly_selected', function(e){
