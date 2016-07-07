@@ -26,6 +26,7 @@ var timeline = (function() {
             .scale(x)
             .orient("bottom");
 
+        //create and attach svg axis - really cool
         var svg = el.append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)

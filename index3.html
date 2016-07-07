@@ -21,6 +21,7 @@
 	<link rel="stylesheet" href="third/pocketgrid.css">
 	<link rel="stylesheet" href="style.css">
 	<script src="third/sql.js"></script>
+	<script src="database.js"></script>
 
 </head>
 <body>
@@ -169,10 +170,9 @@
 					<div class="full block-group">
 						<div class="filtersCtrl block"></div>
 						<div class="projectsCtrl block">
-							<div class="map block">
-								<button type="button" onclick="">add Project</button>
-							</div>
+											<div class="map block"><button type="button" onclick="">add Project</button></div>
 						</div>
+
 					</div>
 					</div>
 				<div class = "chartContainer block">
@@ -182,13 +182,7 @@
 		</div>
 		<div class="projectTab block">
 			<div class="full block-group">
-				<div class="staff block">
-					<span>Name</span>
-					<input id="newStaffName" type="text"><br><br>
-					<span>Comma separated skills</span>
-					<input id="newStaffSkills" type="text"><br><br>
-					<button id="addNewStaffMember">Add Staff Member</button>
-				</div>
+				<div class="timeline block"></div>
 				<div class="spacer block"></div>
 				<div class="resourceTimeline block"></div>
 			</div>
@@ -264,7 +258,7 @@
 		resourceList.forEach(function(e,i){
 			e = (e.replace(/ /g,''));
 			desk = $('#'+seatMap[e]);
-			desk.css({stroke:'black'});
+			desk.css({stroke:'red'});
 			});
 	};
 
@@ -425,7 +419,6 @@
 	}
 ;</script>
 <script src="project.js"></script>
-<script src="database.js"></script>
 
 </body>
 </html>
