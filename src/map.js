@@ -21,12 +21,11 @@ colors = chroma.scale('Set1').mode('lab').colors(properties.length);
 
 colorDict = R.zipObj(properties,colors)
 
-// function colorEntry(name){
-// 	colorDict[name] = String(chroma.random())
-// }
 
+var activePlot = '';
 // get mapbox token
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2FydGhkYmVldGxlIiwiYSI6ImNpcHl5emhrdjB5YmxoY25yczF6MHhhc2IifQ.2Ld30uLqcffVv-RUAWk_qQ';
+
 //instantiate map
 map = new mapboxgl.Map({
 				    container: 'map',
@@ -34,6 +33,7 @@ map = new mapboxgl.Map({
 				    center: [151.102, -33.82],
 				    zoom: 9
 				});
+
 //get data and convert to GeoJSON source
 var sydneySa1Source = new mapboxgl.GeoJSONSource({
    data: sydneySa1
@@ -97,35 +97,43 @@ function filterOutliers(someArray) {
     return filteredValues;
 }
 
-//function that adds a button to el with ID elID, and calls that button text
-function dataPropertyButton(elID, text){
-	el = $('#'+elID)
-	el.append($('<div>%s</div>'.replace('%s', text)).toggleClass('pure_button block ab').css("background-color",colorDict[text]));
-	
+// /////////////////////////////////////////////////////
+// Cross filter bit
+// ////////////////////////////////////////////////////
+
+data = R.pluck("properties", sydneySa1.features);
+var facts = crossfilter(data);
+plot = document.getElementById('plot');
+otherVar = []
+
+
+//get list of sa17_digits
+sa17_digits = R.map(R.path(['properties','sa1_7digit'],R.__),sydneySa1.features)
+
+
+//function that adds a div to el with ID elID, and calls that button text
+function dataDiv(elID, text){
+	el = $('#'+elID);
+	container = $('<div></div>');
+	container.toggleClass('block ab')
+	el.append(container);
+	chartBox = $('<div></div>');
+	chartBox.attr('id', text);
+	button = $('<div>%s</div>'.replace('%s', text));
+	button.attr('id', text + " button")
+	button.css('color', colorDict[text]);
+	container.append(button);
+	container.append(chartBox);
 	// change background colour and set opacity = 0.2
 }
 
-
 // R.map(colorEntry,properties)
-
-addCtrlButtons = R.curry(dataPropertyButton)("controls")
+addCtrlButtons = R.curry(dataDiv)("controls")
 R.map(addCtrlButtons, properties)
-
-
-//add listener to button container div with id elID
-function containerListener(elID){
-	el = $('#'+elID);
-	el.click(function(event){
-		console.log(event.target.textContent);
-		dataPropertyColor(event.target.textContent);
-		createPlot(event.target.textContent);
-		}) 
-    }
-
-containerListener("controls",dataPropertyColor)
-
-//picks text from properties and sets map style to choropleth of that property
+createPlot("median_age");
+//function picks text from properties and sets map style to choropleth of that property
 function dataPropertyColor(text){
+	console.log(text)
 	props = R.map(R.path(['properties',text],R.__),sydneySa1.features)
 	props = R.filter(function(x){return !(x==0);},props);
 	// console.log(props);
@@ -141,18 +149,41 @@ function dataPropertyColor(text){
             };
     map.setPaintProperty('syd1','fill-color',newStyle)
 }
-//picks text from properties and creates plotly scatter plot of that property
+
+//function picks text from properties and creates plotly scatter plot of that property
+// filteredsa1_7 = facts.dimension(function(d){return d["sa1_7digit"]?d["sa1_7digit"]:0}).top(Infinity);
+function sa1Comparer(obj,oObj){
+	return (obj["sa1_7digit"] === oObj["sa1_7digit"])
+} 
+
 function createPlot(text){
-	stationDist = R.map(R.path(['properties','station_dist'],R.__),sydneySa1.features)
-	otherVar = R.map(R.path(['properties',text],R.__),sydneySa1.features)
-	var plot = {
-		x: stationDist,
-		y: otherVar,
+	activePlot = text;
+	if (otherVar.length > 16){
+		drop = otherVar.pop()
+		drop.dispose()
+	}
+	otherVar.unshift(facts.dimension(function(d){return d[text]?d[text]:0}));
+	filteredObj = otherVar[0].top(Infinity)
+	unfilteredObj = R.differenceWith(sa1Comparer, R.pluck("properties",sydneySa1.features), otherVar[0].top(Infinity))
+	filteredVar = R.pluck(text,filteredObj);
+	filteredStationDist = R.pluck("station_dist", filteredObj);
+	unfilteredVar = R.pluck(text,unfilteredObj);
+	unfilteredStationDist = R.pluck("station_dist",unfilteredObj);
+	var filtered = {
+		x: filteredStationDist,
+		y: filteredVar,
 		mode: 'markers',
 		type: 'scatter',
-		marker:{color: colorDict[text]}
+		marker:{color: colorDict[text],opacity:0.66}
 	}
-	data = [plot]
+	var unfiltered = {
+		x: unfilteredStationDist,
+		y: unfilteredVar,
+		mode: 'markers',
+		type: 'scatter',
+		marker:{color: 'Grey',opacity:0.2}
+	}
+	data = [unfiltered,filtered]
 	layout = {title: text + " vs distance to nearest train station",
 	titlefont: {
 	      family: 'Courier New, monospace',
@@ -165,32 +196,135 @@ function createPlot(text){
 		    r: 50,
 		    b: 30,
 		    t: 30,
-		    pad: 4
-  		}
+		    pad: 4}
 
 		}
-	plot = document.getElementById('plot');
+	
 	Plotly.newPlot(plot, data, layout)
-	plot.on('plotly_selected', function(e){
-		pointNumbers = R.pluck("pointNumber",e.points);
-		// console.log(pointNumbers);
-		pickSa1 = pick(sa17_digits);
-		// console.log(sa17_digits);
-		selectedSa1s = R.map(pickSa1,pointNumbers);
-		// console.log(selectedSa1s);
-		// overRideStyling(selectedSa1s);
-		filter = ["in","sa1_7digit"]
-		strFilter = R.union(filter,selectedSa1s)
-		// console.log(strFilter)
-		map.setFilter('highlight', strFilter)
-	})
+
+
 }
 
-//convert point IDs to sa17digit
-sa17_digits = R.map(R.path(['properties','sa1_7digit'],R.__),sydneySa1.features)
 
+//function to add listener to button container div with id elID
+function containerListenerPlotColor(elID){
+	el = $('#'+elID);
+	el.click(function(event){
+		console.log(event.target.textContent);
+		dataPropertyColor(event.target.textContent);
+		createPlot(event.target.textContent);
+		}) 
+    }
 
+//add listener to button container div with id elID and call back dataProperty Color
+containerListenerPlotColor("controls",dataPropertyColor)
+
+//helper function R.prop for list
 function pick(array,i){
 	return array[i];
 }
 pick = R.curry(pick)
+
+function updatePlot(chart){
+	text = activePlot;
+	console.log(text);
+	filteredObj = chart.dimension().top(Infinity);
+	selectedSa1s = R.pluck("sa1_7digit", filteredObj);
+	unfilteredObj = R.differenceWith(sa1Comparer, R.pluck("properties",sydneySa1.features), filteredObj)
+	filteredVar = R.pluck(text,filteredObj);
+	filteredStationDist = R.pluck("station_dist", filteredObj);
+	unfilteredVar = R.pluck(text,unfilteredObj);
+	unfilteredStationDist = R.pluck("station_dist",unfilteredObj);
+	var filtered = {
+		x: filteredStationDist,
+		y: filteredVar,
+		mode: 'markers',
+		type: 'scatter',
+		marker:{color: colorDict[text],opacity:0.8}
+	}
+	var unfiltered = {
+		x: unfilteredStationDist,
+		y: unfilteredVar,
+		mode: 'markers',
+		type: 'scatter',
+		marker:{color: 'Grey',opacity:0.1}
+	}
+		layout = {title: text + " vs distance to nearest train station",
+	titlefont: {
+	      family: 'Courier New, monospace',
+	      size: 18,
+	      color: '#7f7f7f'
+	    },
+    hovermode:'closest',
+    margin: {
+		    l: 50,
+		    r: 50,
+		    b: 30,
+		    t: 30,
+		    pad: 4  		}
+
+		}
+	data = [unfiltered,filtered];
+	filter = ["in", "sa1_7digit"]
+	strFilter = R.union(filter,selectedSa1s)
+	// console.log(strFilter)
+	map.setFilter('highlight', strFilter)
+	Plotly.newPlot(plot, data, layout);
+	
+}
+
+//a->b
+function charter(id){
+	chid = "#" + id;
+	chart = dc.barChart("#"+id);
+	chartDim = facts.dimension(function(d){return d[id]});
+	tops = (chartDim.filterAll().top(1)[0][id]);
+	scaler = d3.scale.quantize()
+			.domain(rangeTwenty(tops))
+			.range(rangeTwenty(tops))
+	console.log(tops);
+	chartGroupCount = chartDim.group(function(d){return scaler(d)}).reduceCount();
+	return chart.width(240)
+		.height(120)
+		.title(id)
+		.margins({top: 10, right: 10, bottom: 20, left: 30})
+		.dimension(chartDim)
+		.group(chartGroupCount)
+		.transitionDuration(500)
+		.on("filtered", updatePlot)
+		.centerBar(false)
+		.elasticY(true)
+		.x(d3.scale.linear().domain([0,tops]))
+		.xUnits(function(){return 20;})
+		.xAxis().ticks(2)
+} 
+function convert(n) {
+    var order = Math.floor(Math.log(n) / Math.LN10
+                       + 0.000000001); // because float math sucks like that
+    return Math.pow(10,order);
+}
+
+function rangeTwenty(tops){
+	return R.map(R.product([(tops/20),R.__]),d3.range(0,20))
+}
+
+
+R.map(charter, properties)
+
+dc.renderAll()
+
+// properties
+
+// var ageChart = dc.barChart("#median_age");
+// var ageVal = facts.dimension(function(d){return d.median_age;});
+// var ageValGroupCount = ageVal.group();
+
+// ageChart.width(240)
+// 	.height(120)
+// 	.margins({top: 10, right: 10, bottom: 20, left: 30})
+// 	.dimension(ageVal)
+// 	.group(ageValGroupCount)
+// 	.transitionDuration(500)
+// 	.centerBar(true)
+// 	.elasticY(true)
+// 	.x(d3.scale.linear().domain([0,90]))
