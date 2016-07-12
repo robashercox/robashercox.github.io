@@ -38,9 +38,18 @@ map = new mapboxgl.Map({
 var sydneySa1Source = new mapboxgl.GeoJSONSource({
    data: sydneySa1
 });
+test = {}
+test['features'] = R.difference(votes.features,R.filter(R.propEq("geometry", null), votes.features))
+newvotes = R.mergeAll([{type:votes.type},{crs:votes.crs},test])
+
+var votesSource = new mapboxgl.GeoJSONSource({
+   data: newvotes
+});
+
 //render GeoJSON source to map
 map.on('load', function () {
 	map.addSource('syd', sydneySa1Source);
+	map.addSource('votes1', votesSource);
 	map.addLayer({
 		'id': 'syd1',
 		'type': 'fill',
@@ -61,6 +70,24 @@ map.on('load', function () {
 	        "fill-opacity": 0.5
 	    },
 	    "filter": ['==',"sa1_7digit","wat"]
+	});
+	map.addLayer({
+	    "id": "votesL",
+	    "type": "circle",
+	    "source": 'votes1',
+	    "layout": {},
+	    "paint": {
+    		"circle-radius":2.5,
+            "circle-color":{
+
+				property: "winner",
+				type: "categorical",
+				stops: [
+						["alp", "Red"], 
+						["lnp", "Blue"]
+				]
+			}
+	    }
 	});
 });
 
@@ -213,7 +240,7 @@ function containerListenerPlotColor(elID){
 		console.log(event.target.textContent);
 		dataPropertyColor(event.target.textContent);
 		createPlot(event.target.textContent);
-		}) 
+			}) 
     }
 
 //add listener to button container div with id elID and call back dataProperty Color
@@ -267,7 +294,7 @@ function updatePlot(chart){
 	data = [unfiltered,filtered];
 	filter = ["in", "sa1_7digit"]
 	strFilter = R.union(filter,selectedSa1s)
-	// console.log(strFilter)
+	console.log(strFilter)
 	map.setFilter('highlight', strFilter)
 	Plotly.newPlot(plot, data, layout);
 	
@@ -295,8 +322,8 @@ function charter(id){
 		.centerBar(false)
 		.elasticY(true)
 		.x(d3.scale.linear().domain([0,tops]))
-		.xUnits(function(){return 20;})
-		.xAxis().ticks(2)
+		.xUnits(function(){return 30;})
+			.xAxis().ticks(2)
 } 
 function convert(n) {
     var order = Math.floor(Math.log(n) / Math.LN10
@@ -305,7 +332,7 @@ function convert(n) {
 }
 
 function rangeTwenty(tops){
-	return R.map(R.product([(tops/20),R.__]),d3.range(0,20))
+	return R.map(R.product([(tops/30),R.__]),d3.range(0,30))
 }
 
 
