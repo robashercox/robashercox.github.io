@@ -296,7 +296,7 @@ function updatePlot(chart){
 	strFilter = R.union(filter,selectedSa1s)
 	console.log(strFilter)
 	map.setFilter('highlight', strFilter)
-	Plotly.newPlot(plot, data, layout);
+	// Plotly.newPlot(plot, data, layout);
 	
 }
 
