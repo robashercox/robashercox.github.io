@@ -13,11 +13,11 @@ var sydneySa1Source = new mapboxgl.GeoJSONSource({
    data: sydneySa1
 });
 test = {}
-test['features'] = R.difference(votes.features,R.filter(R.propEq("geometry", null), votes.features))
+test['features'] = R.difference(votes.features,R.filter(R.propEq("geometry", null), votes.features));
 newvotes = R.mergeAll([{type:votes.type},{crs:votes.crs},test])
 
 var votesSource = new mapboxgl.GeoJSONSource({
-   data: newvotes
+   data: votes
 });
 
 //render GeoJSON source to map

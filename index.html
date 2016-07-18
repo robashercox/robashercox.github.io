@@ -25,13 +25,13 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.1/mapbox-gl.js'></script>
     <script src=../data/sydneySa1.js></script>
-    <script src=../data/avampireData.js></script>
+    <!-- <script src=../data/jtworigins.js></script> -->
     <script src=../data/votes.js></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.1/mapbox-gl.css' rel='stylesheet' />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.21.0/ramda.min.js"></script>
-	<script src="../vendor/mithril.js"></script>
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<!-- <script src="../vendor/mithril.js"></script> -->
+	<!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.js"></script>
@@ -46,14 +46,13 @@
 <div id="mapcontainer" class="block-group">
 	<div id='map' class="block"></div>
 	<div id='controls' class="block-group"></div>
-	<div id='plot' class='block'></div>
+	<!-- <div id='plot' class='block'></div> -->
 	<div id= 'text-container' class='block'>
 		<h1>2011 census stats and 2013 voting</h1>
 		<p>Use the filters to see key differences in the characteristics of LNP v ALP seats (hint: poorer and younger, the inner west being an interesting exception.)</p>
 	</div>
-</div>
-<script src=../src/map.js></script>
-<script src=../src/plot.js></script>
+</div> 
+<script src=../src/mappie.js></script>
 <!-- <script src=../src/lokiTest.js></script> -->
 
 </body>

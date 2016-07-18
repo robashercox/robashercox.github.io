@@ -16,7 +16,7 @@
 
 //for every property add a button with the properties name
 properties = R.keys(sydneySa1.features[0].properties)
-
+sydneySa1
 colors = chroma.scale('Set1').mode('lab').colors(properties.length);
 
 colorDict = R.zipObj(properties,colors)
@@ -38,13 +38,13 @@ map = new mapboxgl.Map({
 var sydneySa1Source = new mapboxgl.GeoJSONSource({
    data: sydneySa1
 });
-test = {}
-test['features'] = R.difference(votes.features,R.filter(R.propEq("geometry", null), votes.features))
-newvotes = R.mergeAll([{type:votes.type},{crs:votes.crs},test])
+// test = {}
+// test['features'] = R.difference(votes.features,R.filter(R.propEq("geometry", null), votes.features))
+// newvotes = R.mergeAll([{type:votes.type},{crs:votes.crs},test])
 
-var votesSource = new mapboxgl.GeoJSONSource({
-   data: newvotes
-});
+// var votesSource = new mapboxgl.GeoJSONSource({
+//    data: newvotes
+// });
 
 //render GeoJSON source to map
 map.on('load', function () {
@@ -71,24 +71,24 @@ map.on('load', function () {
 	    },
 	    "filter": ['==',"sa1_7digit","wat"]
 	});
-	map.addLayer({
-	    "id": "votesL",
-	    "type": "circle",
-	    "source": 'votes1',
-	    "layout": {},
-	    "paint": {
-    		"circle-radius":2.5,
-            "circle-color":{
+	// map.addLayer({
+	//     "id": "votesL",
+	//     "type": "circle",
+	//     "source": 'votes1',
+	//     "layout": {},
+	//     "paint": {
+ //    		"circle-radius":2.5,
+ //            "circle-color":{
 
-				property: "winner",
-				type: "categorical",
-				stops: [
-						["alp", "Red"], 
-						["lnp", "Blue"]
-				]
-			}
-	    }
-	});
+	// 			property: "winner",
+	// 			type: "categorical",
+	// 			stops: [
+	// 					["alp", "Red"], 
+	// 					["lnp", "Blue"]
+	// 			]
+	// 		}
+	//     }
+	// });
 });
 
 //funtion that removes outliers - needs to be worked on
@@ -157,7 +157,7 @@ function dataDiv(elID, text){
 // R.map(colorEntry,properties)
 addCtrlButtons = R.curry(dataDiv)("controls")
 R.map(addCtrlButtons, properties)
-createPlot("median_age");
+// createPlot("median_age");
 //function picks text from properties and sets map style to choropleth of that property
 function dataPropertyColor(text){
 	console.log(text)
@@ -239,7 +239,7 @@ function containerListenerPlotColor(elID){
 	el.click(function(event){
 		console.log(event.target.textContent);
 		dataPropertyColor(event.target.textContent);
-		createPlot(event.target.textContent);
+		// createPlot(event.target.textContent);
 			}) 
     }
 
