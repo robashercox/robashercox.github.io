@@ -32,7 +32,7 @@ html,body,.App{
 	/*vertical-align: center;*/
 }
 #text-container{
-	width: 30%;
+	width: 35%;
 	float:right;
 }
 p{
@@ -43,4 +43,21 @@ p{
 h1{
 	font-size: 20
 	 color: '#7f7f7f'
+}
+
+.clickDiv {
+    /*display:inline-block;*/
+    color:#000;
+    border:1px solid #CCC;
+    /*background:#DDD;*/
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+    cursor:pointer;
+    /*vertical-align:middle;*/
+    max-width: 300px;
+    padding: 5px;
+    text-align: center;
+}
+.clickDiv:active {
+    color:red;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
 }

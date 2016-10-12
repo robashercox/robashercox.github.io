@@ -44,7 +44,7 @@ test['features'] = R.filter(filterNull, votes.features);
 newvotes = R.mergeAll([{type:votes.type},{crs:votes.crs},test])
 
 function filterNull(x){
-	return !(R.propEq("geometry", null,x));
+	return !(R.propEq("geometry", null,x))
 }
 var votesSource = new mapboxgl.GeoJSONSource({
    data: newvotes
@@ -93,6 +93,8 @@ map.on('load', function () {
 			}
 	    }
 	});
+	dataPropertyColor("median_rent");
+
 });
 
 //funtion that removes outliers - needs to be worked on
@@ -152,6 +154,7 @@ function dataDiv(elID, text){
 	chartBox.attr('id', text);
 	button = $('<div>%s</div>'.replace('%s', text));
 	button.attr('id', text + " button")
+	button.attr('class', "clickDiv")
 	button.css('color', colorDict[text]);
 	container.append(button);
 	container.append(chartBox);
@@ -341,13 +344,14 @@ function rangeTwenty(tops){
 }
 
 
+
 R.map(charter, properties)
 
 dc.renderAll()
 
 // properties
 
-// var ageChart = dc.barChart("#median_age");
+// var ageChart = dc.barChart("#meidan_age");
 // var ageVal = facts.dimension(function(d){return d.median_age;});
 // var ageValGroupCount = ageVal.group();
 
